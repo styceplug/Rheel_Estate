@@ -1,0 +1,97 @@
+name: rheel_estate
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+
+version: 1.1.21+12
+
+environment:
+  sdk: ^3.5.4
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.8
+  supabase_flutter: ^2.8.3
+  get: ^4.6.6
+  shared_preferences: ^2.3.5
+  iconsax: ^0.0.8
+  font_awesome_flutter: ^10.8.0
+  mailer: ^6.4.1
+  google_sign_in: ^6.2.2
+  flutter_launcher_icons: ^0.14.2
+  http: ^1.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+flutter_icons:
+  image_path: "assets/images/app_icon.png"
+  android: true
+  ios: true
+
+
+  flutter_lints: ^4.0.0
+
+
+
+
+# The following section is specific to Flutter packages.
+flutter:
+
+
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+    - assets/gifs/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Black.otf
+          weight: 900
+        - asset: assets/fonts/Poppins-BlackItalic.otf
+          weight: 900
+          style: italic
+        - asset: assets/fonts/Poppins-Bold.otf
+          weight: 700
+        - asset: assets/fonts/Poppins-BoldItalic.otf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Poppins-ExtraBold.otf
+          weight: 800
+        - asset: assets/fonts/Poppins-ExtraBoldItalic.otf
+          weight: 800
+          style: italic
+        - asset: assets/fonts/Poppins-ExtraLight.otf
+          weight: 200
+        - asset: assets/fonts/Poppins-ExtraLightItalic.otf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/Poppins-Italic.otf
+          style: italic
+        - asset: assets/fonts/Poppins-Light.otf
+          weight: 300
+        - asset: assets/fonts/Poppins-LightItalic.otf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Poppins-Medium.otf
+          weight: 500
+        - asset: assets/fonts/Poppins-MediumItalic.otf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Poppins-Regular.otf
+        - asset: assets/fonts/Poppins-SemiBold.otf
+          weight: 600
+        - asset: assets/fonts/Poppins-SemiBoldItalic.otf
+          weight: 600
+          style: italic
