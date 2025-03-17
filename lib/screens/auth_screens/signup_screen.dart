@@ -1,12 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:rheel_estate/auth/auth_service.dart';
+import 'package:rheel_estate/controllers/auth_controller.dart';
 import 'package:rheel_estate/routes/routes.dart';
 import 'package:rheel_estate/utils/colors.dart';
 import 'package:rheel_estate/utils/dimensions.dart';
-import 'package:rheel_estate/widgets/custom_textfield.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -46,81 +44,127 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
-  final authService = AuthService();
+  final authController = Get.find<AuthController>();
+
+  // final authService = AuthService();
 
   void signUp() async {
-    final name = nameController.text;
-    final email = emailController.text;
-    final number = numberController.text;
-    final password = passwordController.text;
-    final confirmPassword = confirmPasswordController.text;
+    final name = nameController.text.trim();
+    final email = emailController.text.trim();
+    final number = numberController.text.trim();
+    final password = passwordController.text.trim();
+    final confirmPassword = confirmPasswordController.text.trim();
 
-    if (name.isEmpty ||
-        email.isEmpty ||
-        number.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty) {
-      Get.snackbar(
-        'Invalid Input',
-        'Please fill out all fields.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-        icon: const Icon(Icons.error, color: Colors.white),
-      );
+    print("🛠️ Debugging:");
+    print("➡️ Name: $name");
+    print("➡️ Email: $email");
+    print("➡️ Phone: $number");
+    print("➡️ Password: '${password.isEmpty ? '🚨 EMPTY' : password}'");
+    print("➡️ Confirm Password: '${confirmPassword.isEmpty ? '🚨 EMPTY' : confirmPassword}'");
+
+    // ✅ Field Validation
+    if (name.isEmpty || email.isEmpty || number.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+      showSnackbar('Missing Fields', 'Please fill out all required fields.', Colors.red);
       return;
     }
 
+    // ✅ Email Validation
+    if (!RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(email)) {
+      showSnackbar('Invalid Email', 'Please enter a valid email address.', Colors.red);
+      return;
+    }
+
+    // ✅ Phone Number Validation (10-15 digits)
+    if (!RegExp(r"^[0-9]{10,15}$").hasMatch(number)) {
+      showSnackbar('Invalid Phone Number', 'Enter a valid phone number (10-15 digits).', Colors.red);
+      return;
+    }
+
+    // ✅ Password Strength Validation
+    if (password.length < 6) {
+      showSnackbar('Weak Password', 'Password must be at least 6 characters long.', Colors.red);
+      return;
+    }
+
+    // ✅ Password Match Check
     if (password != confirmPassword) {
-      Get.snackbar(
-        'Password Mismatch',
-        'Passwords do not match. Please try again.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-        icon: const Icon(Icons.error, color: Colors.white),
-      );
+      showSnackbar('Password Mismatch', 'Passwords do not match.', Colors.red);
       return;
     }
 
+    // ✅ Terms & Conditions Check
     if (!tickTerms) {
-      Get.snackbar(
-        'Terms and Conditions',
-        'You must accept the terms and conditions to continue.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-        icon: const Icon(Icons.error, color: Colors.white),
-      );
+      showSnackbar('Terms & Conditions', 'You must accept the terms and conditions.', Colors.red);
       return;
     }
+
+    setState(() {
+      isLoading = true;
+    });
 
     try {
-      await authService.signUpWithEmailPassword(email, password);
+      print("📤 Sending signup request...");
 
-      Get.offNamed(AppRoutes.floatingBar);
-      Get.snackbar(
-        'Sign-Up Successful',
-        'Your account has been created successfully.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green.withOpacity(0.8),
-        colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
+      Response response = await authController.signup(
+        fullName: name,
+        phoneNumber: number,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
       );
+
+      print("📥 API Response: ${response.body}");
+
+      // ✅ Handle API Response Based on Status Code
+      if (response.statusCode == 201 && response.body['status'] == true) {
+        // 🔥 Save Token
+        String? token = response.body['data']['token'];
+        if (token != null) {
+          authController.setToken(token);
+          print("🔑 Token saved successfully!");
+        }
+
+        showSnackbar('Success 🎉', 'Welcome, ${response.body['data']['name']}!', Colors.green);
+        Get.offAllNamed(AppRoutes.floatingBar);
+      } else if (response.statusCode == 400) {
+        showSnackbar('Invalid Input ❌', response.body['message'] ?? 'Check your input and try again.', Colors.orange);
+      } else if (response.statusCode == 409) {
+        showSnackbar('Email Already Exists 🚨', response.body['message'] ?? 'This email is already registered.', Colors.red);
+      } else if (response.statusCode == 500) {
+        showSnackbar('Server Error 🛠️', 'Something went wrong. Try again later.', Colors.red);
+      } else {
+        showSnackbar('Unexpected Error ❗', 'An unknown error occurred.', Colors.red);
+      }
     } catch (e) {
-      Get.snackbar(
-        'Sign-Up Failed',
-        'Error: $e',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red.withOpacity(0.8),
-        colorText: Colors.white,
-        icon: const Icon(Icons.error, color: Colors.white),
-      );
+      print("❌ Signup error: $e");
+      showSnackbar('Network Error 🌐', 'Check your internet and try again.', Colors.red);
     } finally {
       setState(() {
         isLoading = false;
       });
     }
+  }
+
+// ✅ Snackbar Helper Function
+  void showSnackbar(String title, String message, Color color) {
+    Get.snackbar(
+      title,
+      message,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: color.withOpacity(0.8),
+      colorText: Colors.white,
+      icon: const Icon(Icons.error, color: Colors.white),
+    );
+  }
+
+  void verifyForm() async {
+    await authController.signup(
+      fullName: nameController.text.trim(),
+      phoneNumber: numberController.text.trim(),
+      email: emailController.text.trim(),
+      password: passwordController.text.trim(),
+      confirmPassword: confirmPasswordController.text.trim(),
+    );
   }
 
   String passwordStrength(String password) {
@@ -148,7 +192,7 @@ class _SignupScreenState extends State<SignupScreen> {
           obscureText: !isVisible,
           controller: passwordController,
           cursorColor: AppColors.blackColor.withOpacity(0.6),
-          autofillHints: [AutofillHints.newPassword],
+          // autofillHints: [AutofillHints.newPassword],
           onChanged: (value) {
             setState(() {
               passwordStrengthMessage = passwordStrength(value);
@@ -175,22 +219,22 @@ class _SignupScreenState extends State<SignupScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Dimensions.radius30),
               borderSide: BorderSide(
-                width: Dimensions.width5 / Dimensions.width20,
-                color: AppColors.blackColor.withOpacity(0.4),
+                width: Dimensions.width5 / Dimensions.width15,
+                color: AppColors.blackColor,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Dimensions.radius30),
               borderSide: BorderSide(
-                width: Dimensions.width5 / Dimensions.width20,
+                width: Dimensions.width5 / Dimensions.width15,
                 color: AppColors.blackColor,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Dimensions.radius30),
               borderSide: BorderSide(
-                width: Dimensions.width5 / Dimensions.width20,
-                color: AppColors.blackColor.withOpacity(0.4),
+                width: Dimensions.width5 / Dimensions.width15,
+                color: AppColors.blackColor,
               ),
             ),
           ),
@@ -273,22 +317,22 @@ class _SignupScreenState extends State<SignupScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Dimensions.radius30),
               borderSide: BorderSide(
-                width: Dimensions.width5 / Dimensions.width20,
-                color: AppColors.blackColor.withOpacity(0.4),
+                width: Dimensions.width5 / Dimensions.width15,
+                color: AppColors.blackColor,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Dimensions.radius30),
               borderSide: BorderSide(
-                width: Dimensions.width5 / Dimensions.width20,
+                width: Dimensions.width5 / Dimensions.width15,
                 color: AppColors.blackColor,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(Dimensions.radius30),
               borderSide: BorderSide(
-                width: Dimensions.width5 / Dimensions.width20,
-                color: AppColors.blackColor.withOpacity(0.4),
+                width: Dimensions.width5 / Dimensions.width15,
+                color: AppColors.blackColor,
               ),
             ),
           ),
@@ -332,7 +376,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         color: AppColors.accentColor.withOpacity(0.1),
                         borderRadius:
                             BorderRadius.circular(Dimensions.radius20)),
-                    child: Icon(CupertinoIcons.chevron_back)),
+                    child: const Icon(CupertinoIcons.chevron_back)),
               ),
               SizedBox(height: Dimensions.height50),
               Text(
@@ -433,7 +477,7 @@ class _SignupScreenState extends State<SignupScreen> {
               SizedBox(height: Dimensions.height20),
               //sign up btn
               InkWell(
-                onTap: isLoading ? null : signUp,
+                onTap: isLoading ? null : verifyForm,
                 child: Container(
                   alignment: Alignment.center,
                   height: Dimensions.height54,
@@ -517,22 +561,22 @@ class AuthTextField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Dimensions.radius30),
           borderSide: BorderSide(
-            width: Dimensions.width5 / Dimensions.width20,
-            color: AppColors.blackColor.withOpacity(0.4),
+            width: Dimensions.width5 / Dimensions.width15,
+            color: AppColors.blackColor,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Dimensions.radius30),
           borderSide: BorderSide(
-            width: Dimensions.width5 / Dimensions.width20,
+            width: Dimensions.width5 / Dimensions.width15,
             color: AppColors.blackColor,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Dimensions.radius30),
           borderSide: BorderSide(
-            width: Dimensions.width5 / Dimensions.width20,
-            color: AppColors.blackColor.withOpacity(0.4),
+            width: Dimensions.width5 / Dimensions.width15,
+            color: AppColors.blackColor,
           ),
         ),
       ),

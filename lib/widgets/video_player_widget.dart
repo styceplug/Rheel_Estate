@@ -1,29 +1,46 @@
-// Import necessary packages
-import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:rheel_estate/controllers/properties_controller.dart';
+import 'package:video_player/video_player.dart';
 
-import '../utils/colors.dart';
-import '../utils/dimensions.dart';
+class VirtualTourScreen extends StatefulWidget {
+  final String? videoUrl;
 
-class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-
-  const VideoPlayerWidget({super.key, required this.videoUrl});
+  const VirtualTourScreen({Key? key, this.videoUrl}) : super(key: key);
 
   @override
-  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
+  _VirtualTourScreenState createState() => _VirtualTourScreenState();
 }
 
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+class _VirtualTourScreenState extends State<VirtualTourScreen> {
   late VideoPlayerController _controller;
+  bool isVideoInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-      ..initialize().then((_) {
-        setState(() {}); // Update UI when video is loaded
-      });
+    printVideoUrl(); // Print URL for debugging
+
+    if (widget.videoUrl != null && widget.videoUrl!.isNotEmpty) {
+      _controller = VideoPlayerController.network(widget.videoUrl!)
+        ..initialize().then((_) {
+          if (mounted) {
+            setState(() {
+              isVideoInitialized = true;
+            });
+          }
+          _controller.play(); // Auto-play the video
+        });
+    }
+  }
+
+
+  PropertiesController property = Get.find<PropertiesController>();
+
+
+  void printVideoUrl() {
+    print('Raw video_upload data: ${widget.videoUrl}');
+
   }
 
   @override
@@ -35,22 +52,23 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-
-      height: Dimensions.height20 * 10,
+      height: 200, // Adjust as needed
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimensions.radius20),
+        borderRadius: BorderRadius.circular(15),
         border: Border.all(color: Colors.grey.withOpacity(0.5)),
       ),
-      child: _controller.value.isInitialized
+      child: isVideoInitialized
           ? ClipRRect(
-        borderRadius: BorderRadius.circular(Dimensions.radius20),
+        borderRadius: BorderRadius.circular(15),
         child: GestureDetector(
           onTap: () {
-            if (_controller.value.isPlaying) {
-              _controller.pause();
-            } else {
-              _controller.play();
-            }
+            setState(() {
+              if (_controller.value.isPlaying) {
+                _controller.pause();
+              } else {
+                _controller.play();
+              }
+            });
           },
           child: Stack(
             alignment: Alignment.center,
@@ -60,22 +78,20 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 child: VideoPlayer(_controller),
               ),
               if (!_controller.value.isPlaying)
-                Icon(
+                const Icon(
                   Icons.play_circle_outline,
-                  size: Dimensions.iconSize30,
+                  size: 50,
                   color: Colors.white,
                 ),
             ],
           ),
         ),
       )
-          : Center(
+          : const Center(
         child: CircularProgressIndicator(
-          color: AppColors.accentColor,
+          color: Colors.blue, // Replace with AppColors.accentColor if needed
         ),
       ),
     );
   }
 }
-
-

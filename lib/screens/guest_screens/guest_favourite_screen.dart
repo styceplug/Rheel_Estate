@@ -61,7 +61,7 @@ class _GuestFavouriteScreenState extends State<GuestFavouriteScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Get.offAllNamed(AppRoutes.signupScreen); // Navigate to Sign Up
+                      Get.toNamed(AppRoutes.signupScreen); // Navigate to Sign Up
                     },
                     child: Container(
                       alignment: Alignment.center,

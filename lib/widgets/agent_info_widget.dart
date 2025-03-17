@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 import '../utils/app_constants.dart';
 import '../utils/colors.dart';
@@ -21,7 +21,7 @@ class _AgentInfoWidgetState extends State<AgentInfoWidget> {
   @override
   void initState() {
     super.initState();
-    _agentDetails = fetchAgentDetails(widget.agentId);
+    // _agentDetails = fetchAgentDetails(widget.agentId);
   }
 
   @override
@@ -96,7 +96,7 @@ class _AgentInfoWidgetState extends State<AgentInfoWidget> {
     
   }
 
-  Future<Map<String, dynamic>?> fetchAgentDetails(String agentId) async {
+/*  Future<Map<String, dynamic>?> fetchAgentDetails(String agentId) async {
     try {
       final response = await Supabase.instance.client
           .from('agents')
@@ -109,7 +109,7 @@ class _AgentInfoWidgetState extends State<AgentInfoWidget> {
       debugPrint('Error fetching agent details: $e');
       return null;
     }
-  }
+  }*/
 
 
   Widget _buildContactButtons() {

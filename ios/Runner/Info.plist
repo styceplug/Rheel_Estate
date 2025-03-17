@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ASAuthorizationAppleID</key>
+	<string>rheel.easy.property.search</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -30,6 +32,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.752868949038-3vjd46cje2r04qfca2hj7vubbbr5068a</string>
+				<string>rheel.easy.property.search-service</string>
 			</array>
 		</dict>
 	</array>

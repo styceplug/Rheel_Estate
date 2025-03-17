@@ -1,66 +1,69 @@
+
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rheel_estate/models/products_data.dart';
+import 'package:rheel_estate/routes/routes.dart';
 import '../utils/dimensions.dart';
 import '../controllers/properties_controller.dart';
 
 class FavouriteCard extends StatelessWidget {
-  final PropertiesController propertiesController =
-  Get.put(PropertiesController());
+  final PropertiesModel property;
 
-  final String productImage;
-  final String propertyFor;
-  final String location;
-  final String price;
-  final String livingRooms;
-  final String baths;
-  final String beds;
-  final String description;
-  final String propertyType;
-  final String floorplan;
-  final String videoLink;
-  final String updatedAt;
-  final List<String> images;
-  final bool liked;
-  final Function(bool) onLike;
+  final PropertiesController propertiesController =
+      Get.find<PropertiesController>();
 
   FavouriteCard({
     super.key,
-    required this.productImage,
-    required this.propertyFor,
-    required this.location,
-    required this.price,
-    required this.livingRooms,
-    required this.baths,
-    required this.beds,
-    required this.description,
-    required this.propertyType,
-    required this.floorplan,
-    required this.videoLink,
-    required this.updatedAt,
-    required this.images,
-    this.liked = false,
-    required this.onLike,
+    required this.property,
   });
+
+  void likeProperty() async {
+
+    propertiesController.toggleFavorite(property);
+  }
+
+  String getPropertyFor(String propertyForValue) {
+    switch (propertyForValue) {
+      case 'Sell':
+        return 'For Sale';
+      case 'Lease':
+        return 'For Lease';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  String getPropertyType(int? propertyTypeValue) {
+    switch (propertyTypeValue) {
+      case 1:
+        return 'Duplex Building';
+      case 2:
+        return 'Terrace Building';
+      case 3:
+        return 'Bungalow Building';
+      case 4:
+        return 'Apartment Building';
+      case 5:
+        return 'Commercial Building';
+      case 6:
+        return 'Carcass Building';
+      case 7:
+        return 'Land Building';
+      case 8:
+        return 'JV Land';
+      default:
+        return 'Unknown Building'; // Fallback for unmapped values
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.toNamed('/propertyDetails', arguments: {
-          'productImage': productImage,
-          'propertyFor': propertyFor,
-          'location': location,
-          'price': price,
-          'livingRooms': livingRooms,
-          'baths': baths,
-          'beds': beds,
-          'description': description,
-          'propertyType': propertyType,
-          'floorplan': floorplan,
-          'videoLink': videoLink,
-          'updatedAt': updatedAt,
-          'images': images,
-        });
+        Get.toNamed(AppRoutes.propertyDetailsScreen, arguments: {property});
       },
       child: Container(
         margin: EdgeInsets.symmetric(
@@ -79,17 +82,21 @@ class FavouriteCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Container(
+                SizedBox(
                   height: Dimensions.height100 * 2,
                   width: double.maxFinite,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(Dimensions.radius15),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                      property.image.isNotEmpty ? property.image[0] : '',
+                      width: double.maxFinite,
+                      height: double.maxFinite,
                       fit: BoxFit.cover,
-                      image: NetworkImage(productImage),
                     ),
-                    borderRadius: BorderRadius.circular(Dimensions.radius20),
                   ),
                 ),
+
                 Positioned(
                   right: Dimensions.width10,
                   top: Dimensions.height10,
@@ -98,65 +105,31 @@ class FavouriteCard extends StatelessWidget {
                         vertical: Dimensions.height5,
                         horizontal: Dimensions.width5),
                     decoration: BoxDecoration(
-                      color: !liked
-                          ? Colors.black.withOpacity(0.4)
-                          : Colors.white,
+                      color: Colors.black.withOpacity(0.4),
                       shape: BoxShape.circle,
                     ),
                     child: InkWell(
-                      onTap: () {
-                        onLike(!liked);
-                        if (!liked) {
-                          propertiesController.addFavorite({
-                            'productImage': productImage,
-                            'propertyFor': propertyFor,
-                            'location': location,
-                            'price': price,
-                            'livingRooms': livingRooms,
-                            'baths': baths,
-                            'beds': beds,
-                            'description': description,
-                            'propertyType': propertyType,
-                            'floorplan': floorplan,
-                            'videoLink': videoLink,
-                            'updatedAt': updatedAt,
-                          });
-                        } else {
-                          propertiesController.removeFavorite({
-                            'productImage': productImage,
-                            'propertyFor': propertyFor,
-                            'location': location,
-                            'price': price,
-                            'livingRooms': livingRooms,
-                            'baths': baths,
-                            'beds': beds,
-                            'description': description,
-                            'propertyType': propertyType,
-                            'floorplan': floorplan,
-                            'videoLink': videoLink,
-                            'updatedAt': updatedAt,
-                          });
-                        }
-                      },
-                      child: Icon(
-                        !liked ? Icons.favorite_border : Icons.favorite,
-                        color: liked ? Colors.red : Colors.white,
-                        size: Dimensions.iconSize24,
-                      ),
+                        onTap: (){
+                          likeProperty();
+                        },
+                        child: propertiesController.favorites.any((fav) => fav.id == property.id)
+                            ? const Icon(Icons.favorite,color: Colors.white)
+                            : const Icon(Icons.favorite_border, color: Colors.white,)
                     ),
                   ),
                 ),
+
                 Positioned(
                   bottom: Dimensions.height10,
                   left: Dimensions.width25,
                   child: Row(
                     children: [
                       _buildFeatureItem(
-                          Icons.chair_outlined, '$livingRooms Living'),
+                          Icons.chair_outlined, '${property.livingRoom} Living'),
                       SizedBox(width: Dimensions.width10),
-                      _buildFeatureItem(Icons.bathtub_outlined, '$baths Baths'),
+                      _buildFeatureItem(Icons.bathtub_outlined, '${property.bathroom} Baths'),
                       SizedBox(width: Dimensions.width10),
-                      _buildFeatureItem(Icons.bed_outlined, '$beds Beds'),
+                      _buildFeatureItem(Icons.bed_outlined, '${property.bedroom} Beds'),
                     ],
                   ),
                 ),
@@ -184,7 +157,7 @@ class FavouriteCard extends StatelessWidget {
                           color: const Color(0xFF016D54)),
                       SizedBox(width: Dimensions.width5),
                       Text(
-                        propertyFor,
+                        getPropertyFor(property.propertyFor),
                         style: TextStyle(
                           fontSize: Dimensions.font14,
                           fontWeight: FontWeight.w600,
@@ -199,7 +172,7 @@ class FavouriteCard extends StatelessWidget {
                           color: const Color(0xFF016D54)),
                       SizedBox(width: Dimensions.width5),
                       Text(
-                        location,
+                        property.location,
                         style: TextStyle(
                           fontSize: Dimensions.font15,
                           fontWeight: FontWeight.w400,
@@ -208,7 +181,7 @@ class FavouriteCard extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    price,
+                    property.price.toString(),
                     style: TextStyle(
                       fontSize: Dimensions.font18,
                       fontWeight: FontWeight.w600,
@@ -251,3 +224,5 @@ class FavouriteCard extends StatelessWidget {
     );
   }
 }
+
+

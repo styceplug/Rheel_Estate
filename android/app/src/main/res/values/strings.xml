@@ -1,0 +1,9 @@
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Rheel Estate</string>
+
+    <!-- Facebook SDK Strings -->
+    <string name="facebook_app_id">626327739893935</string>
+    <string name="facebook_client_token">db3211c45980a289bc1b44eb4005f194</string>
+    <string name="fb_login_protocol_scheme">fb626327739893935</string>
+</resources>

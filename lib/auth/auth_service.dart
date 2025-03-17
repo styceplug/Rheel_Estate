@@ -1,3 +1,4 @@
+/*
 import 'package:get/get.dart';
 import 'package:rheel_estate/routes/routes.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -36,3 +37,4 @@ class AuthService {
     return session?.user?.email;
   }
 }
+*/

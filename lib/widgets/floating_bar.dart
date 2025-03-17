@@ -6,7 +6,7 @@ import 'package:rheel_estate/screens/main_screens/inquiries_screen.dart';
 import 'package:rheel_estate/screens/main_screens/profile_screen.dart';
 import 'package:rheel_estate/utils/colors.dart';
 import 'package:rheel_estate/utils/dimensions.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class FloatingBar extends StatefulWidget {
   const FloatingBar({super.key});
@@ -105,7 +105,7 @@ class _FloatingBarState extends State<FloatingBar> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(8.0),
         decoration: isActive
-            ? BoxDecoration(
+            ? const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white, // Background for active tab
               )

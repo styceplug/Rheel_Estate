@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:rheel_estate/routes/routes.dart';
 import 'package:rheel_estate/utils/app_constants.dart';
-import 'package:rheel_estate/utils/colors.dart';
 import 'package:rheel_estate/utils/dimensions.dart';
 
 class OnboardingScreenRedesigned extends StatefulWidget {
@@ -14,11 +13,14 @@ class OnboardingScreenRedesigned extends StatefulWidget {
       _OnboardingScreenRedesignedState();
 }
 
-class _OnboardingScreenRedesignedState
-    extends State<OnboardingScreenRedesigned> {
+class _OnboardingScreenRedesignedState extends State<OnboardingScreenRedesigned>
+    with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   late final Timer _timer;
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+  late Animation<double> _fadeAnimation;
 
   List<String> images = [
     AppConstants.getPngAsset('onBoardBg1'),
@@ -44,34 +46,65 @@ class _OnboardingScreenRedesignedState
     },
   ];
 
+
+
   @override
   void initState() {
     super.initState();
 
     // Auto-scroll logic
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 10), (timer) {
       if (_currentPage < images.length - 1) {
         _pageController.nextPage(
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
           curve: Curves.easeInOut,
         );
       } else {
         _timer.cancel();
       }
     });
+
+    // Animation setup
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700), // Animation speed
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.5), // Start slightly below
+      end: Offset.zero, // Slide up into position
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeIn,
+    );
+
+    _animationController.forward();
+  }
+
+  @override
+  void didUpdateWidget(covariant OnboardingScreenRedesigned oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget != widget) {
+      _animationController.reset();
+      _animationController.forward();
+    }
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     _timer.cancel();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff0A2F1E),
+      backgroundColor: const Color(0xff0A2F1E),
       body: SizedBox(
         width: Dimensions.screenWidth,
         height: Dimensions.screenHeight,
@@ -85,6 +118,8 @@ class _OnboardingScreenRedesignedState
               onPageChanged: (index) {
                 setState(() {
                   _currentPage = index;
+                  _animationController.reset();
+                  _animationController.forward();
                 });
               },
               itemCount: images.length,
@@ -106,36 +141,62 @@ class _OnboardingScreenRedesignedState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      texts[_currentPage]['title']!,
-                      style: TextStyle(
-                        fontSize: Dimensions.font30 * 1.65,
-                        fontWeight: FontWeight.w800,
-                        fontFamily: 'Poppins',
-                        color: Colors.white,
+                    // Title with animation
+                    SlideTransition(
+                      position: _slideAnimation,
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Text(
+                          texts[_currentPage]['title']!,
+                          style: TextStyle(
+                            fontSize: Dimensions.font30 * 1.65,
+                            fontWeight: FontWeight.w800,
+                            fontFamily: 'Poppins',
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
-                    Text(
-                      texts[_currentPage]['subtitle']!,
-                      style: TextStyle(
-                        fontSize: Dimensions.font30 * 1.5,
-                        fontWeight: FontWeight.w200,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
+                    const SizedBox(height: 10),
+
+                    // Subtitle with animation
+                    SlideTransition(
+                      position: _slideAnimation,
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Text(
+                          texts[_currentPage]['subtitle']!,
+                          style: TextStyle(
+                            fontSize: Dimensions.font30 * 1.5,
+                            fontWeight: FontWeight.w200,
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
                       ),
                     ),
-                    Text(
-                      texts[_currentPage]['description']!,
-                      overflow: TextOverflow.clip,
-                      style: TextStyle(
-                        fontSize: Dimensions.font20,
-                        fontWeight: FontWeight.w200,
-                        color: Colors.white,
-                        fontFamily: 'Poppins',
+                    const SizedBox(height: 10),
+
+                    // Description with animation
+                    SlideTransition(
+                      position: _slideAnimation,
+                      child: FadeTransition(
+                        opacity: _fadeAnimation,
+                        child: Text(
+                          texts[_currentPage]['description']!,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                            fontSize: Dimensions.font20,
+                            fontWeight: FontWeight.w200,
+                            color: Colors.white,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
                       ),
                     ),
+
                     SizedBox(height: Dimensions.height30),
-                    Container(
+                    SizedBox(
                       width: Dimensions.screenWidth,
                       child: Row(
                         children: [
@@ -143,7 +204,7 @@ class _OnboardingScreenRedesignedState
                             onTap: () {
                               _pageController.animateToPage(
                                 images.length - 1,
-                                duration: Duration(milliseconds: 500),
+                                duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeInOut,
                               );
                             },
@@ -156,7 +217,7 @@ class _OnboardingScreenRedesignedState
                               ),
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Row(
                             children: List.generate(images.length, (index) {
                               return Container(
@@ -179,7 +240,7 @@ class _OnboardingScreenRedesignedState
                               );
                             }),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           GestureDetector(
                             onTap: _currentPage == images.length - 1
                                 ? () {
@@ -224,12 +285,10 @@ class _OnboardingScreenRedesignedState
   }
 }
 
-/// Custom scroll physics to restrict rightward scrolling on the last page.
 class _CustomPageViewScrollPhysics extends ScrollPhysics {
   final bool isOnLastPage;
 
-  _CustomPageViewScrollPhysics({required this.isOnLastPage, ScrollPhysics? parent})
-      : super(parent: parent);
+  const _CustomPageViewScrollPhysics({required this.isOnLastPage, super.parent});
 
   @override
   _CustomPageViewScrollPhysics applyTo(ScrollPhysics? ancestor) {
@@ -242,11 +301,9 @@ class _CustomPageViewScrollPhysics extends ScrollPhysics {
   @override
   double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
     if (isOnLastPage && offset < 0) {
-      // Allow scrolling to the left (negative offset).
-      return offset;
+      return offset; // Allow scrolling left
     } else if (isOnLastPage && offset > 0) {
-      // Prevent scrolling to the right (positive offset).
-      return 0.0;
+      return 0.0; // Prevent scrolling right
     }
     return offset;
   }

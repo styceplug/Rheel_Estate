@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
+
 
 import '../../routes/routes.dart';
 import '../../utils/app_constants.dart';
@@ -46,12 +46,12 @@ class _PropertyDetailsScreenRedesignedState
               pinned: true,
               backgroundColor: AppColors.accentColor,
               leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: AppColors.white),
+                icon: const Icon(Icons.arrow_back, color: AppColors.white),
                 onPressed: () => Navigator.pop(context),
               ),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.favorite_border, color: AppColors.white),
+                  icon: const Icon(Icons.favorite_border, color: AppColors.white),
                   onPressed: () {},
                 ),
               ],
@@ -235,7 +235,7 @@ class _PropertyDetailsScreenRedesignedState
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1), // Subtle shadow for floating effect
                     blurRadius: 10,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),

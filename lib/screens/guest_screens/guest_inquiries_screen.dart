@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:rheel_estate/routes/routes.dart';
 
 import '../../utils/colors.dart';
 import '../../utils/dimensions.dart';
@@ -60,7 +61,7 @@ class _GuestInquiriesScreenState extends State<GuestInquiriesScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Get.toNamed('/signupScreen'); // Navigate to Sign Up
+                      Get.toNamed(AppRoutes.signupScreen); // Navigate to Sign Up
                     },
                     child: Container(
                       alignment: Alignment.center,
@@ -84,7 +85,7 @@ class _GuestInquiriesScreenState extends State<GuestInquiriesScreen> {
                   SizedBox(width: Dimensions.width20),
                   InkWell(
                     onTap: () {
-                      Get.back(); // Navigate back
+                      Get.offAllNamed(AppRoutes.guestFloatingBar); // Navigate back
                     },
                     child: Container(
                       alignment: Alignment.center,

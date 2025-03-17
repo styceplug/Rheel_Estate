@@ -1,0 +1,2 @@
+/Users/mac/development/rheel_estate/android/app/.cxx/RelWithDebInfo/4d2o271c/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/mac/development/rheel_estate/android/app/.cxx/RelWithDebInfo/4d2o271c/armeabi-v7a/CMakeFiles/rebuild_cache.dir

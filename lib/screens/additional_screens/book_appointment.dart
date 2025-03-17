@@ -102,7 +102,7 @@ Property Status: ${propertyStatusController.text}
         child: Column(
           children: [
             SizedBox(height: Dimensions.height10),
-            Text('Book an Appointment today to be considered for listing'),
+            const Text('Book an Appointment today to be considered for listing'),
             SizedBox(height: Dimensions.height20),
             //first & last name
             Row(

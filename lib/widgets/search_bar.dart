@@ -1,15 +1,22 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:rheel_estate/controllers/properties_controller.dart';
+import 'package:rheel_estate/models/products_data.dart';
+import 'package:rheel_estate/screens/additional_screens/search_list_screen.dart';
 import 'package:rheel_estate/utils/dimensions.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../utils/app_constants.dart';
 
 class MySearchBar extends StatefulWidget {
   final String hintText;
-  final Function(String) onLocationSelected; // Callback for location selection
+  final Function(String, List<dynamic>) onLocationSelected;
+
 
   const MySearchBar({
     super.key,
     required this.hintText,
-    required this.onLocationSelected, // Add this
+    required this.onLocationSelected,
   });
 
   @override
@@ -17,10 +24,14 @@ class MySearchBar extends StatefulWidget {
 }
 
 class _MySearchBarState extends State<MySearchBar> {
+  PropertiesController propertyController  = Get.find<PropertiesController>();
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+
   List<String> _locations = [];
   List<String> _filteredLocations = [];
+  List<PropertiesModel> _properties = [];
+
   bool _isLoading = false;
   bool _isFocused = false;
 
@@ -45,21 +56,38 @@ class _MySearchBarState extends State<MySearchBar> {
   }
 
   Future<void> _fetchLocations() async {
-    if(!mounted) return;
+    if (!mounted) return;
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final List<dynamic> response =
-          await Supabase.instance.client.from('locations').select('address');
+      final response = await http.get(Uri.parse('${AppConstants.BASE_URL}${AppConstants.GET_PROPERTIES}'));
 
-      setState(() {
-        _locations =
-            response.map((location) => location['address'] as String).toList();
-        _filteredLocations = _locations; // Initialize filtered list
-      });
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data is Map<String, dynamic> && data.containsKey('data')) {
+          List<dynamic> properties = data['data'];
+
+          Set<String> locationsSet = properties
+              .map<String>((property) => property['location'].toString())
+              .toSet();
+
+          _properties = propertyController.properties;
+
+          setState(() {
+            _locations = locationsSet.toList();
+            _filteredLocations = _locations;
+            // _properties = properties;
+          });
+        } else {
+          throw Exception("Unexpected JSON structure: 'data' key not found");
+        }
+      } else {
+        throw Exception('Failed to fetch locations');
+      }
     } catch (e) {
       debugPrint('Error fetching locations: $e');
     } finally {
@@ -72,10 +100,30 @@ class _MySearchBarState extends State<MySearchBar> {
   void _filterLocations(String query) {
     setState(() {
       _filteredLocations = _locations
-          .where((location) =>
-              location.toLowerCase().contains(query.toLowerCase()))
+          .where((location) => location.toLowerCase().contains(query.toLowerCase()))
           .toList();
     });
+  }
+
+  void _selectLocation(String location) {
+    print(_filteredLocations);
+    print(location);
+    List<PropertiesModel> filteredProperties = _properties
+        .where((property) => property.location.toLowerCase().contains(location.toLowerCase()))
+        .toList();
+    print(filteredProperties);
+    
+    Get.to(()=>SearchListScreen(properties: filteredProperties));
+
+    setState(() {
+      _controller.text = location;
+      // _filteredLocations.clear();
+      _controller.clear();
+    });
+
+    _properties.clear();
+    _unfocus();
+    widget.onLocationSelected(location, filteredProperties);
   }
 
   void _unfocus() {
@@ -98,6 +146,19 @@ class _MySearchBarState extends State<MySearchBar> {
               fillColor: Colors.grey[200],
               hintText: widget.hintText,
               prefixIcon: const Icon(Icons.search),
+              suffixIcon: _isFocused
+                  ? IconButton(
+                icon: const Icon(Icons.cancel, color: Colors.grey),
+                onPressed: () {
+                  setState(() {
+                    _controller.clear();
+                    _filteredLocations.clear();
+                    _isFocused = false;
+                  });
+                  _unfocus();
+                },
+              )
+                  : null,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide(
@@ -131,7 +192,7 @@ class _MySearchBarState extends State<MySearchBar> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
-                  BoxShadow(
+                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 10,
                   ),
@@ -144,23 +205,12 @@ class _MySearchBarState extends State<MySearchBar> {
                   final location = _filteredLocations[index];
                   return ListTile(
                     title: Text(location),
-                    onTap: () {
-                      setState(() {
-                        _controller.text = location;
-                        _filteredLocations.clear();
-                      });
-                      _unfocus();
-                      widget.onLocationSelected(
-                          location); // Pass selected location
-                    },
+                    onTap: () => _selectLocation(location),
                   );
                 },
               ),
             ),
-          if (_isFocused &&
-              _filteredLocations.isEmpty &&
-              !_isLoading &&
-              _controller.text.isNotEmpty)
+          if (_isFocused && _filteredLocations.isEmpty && !_isLoading && _controller.text.isNotEmpty)
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text('No results found.'),

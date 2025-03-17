@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:rheel_estate/screens/guest_screens/guest_favourite_screen.dart';
 import 'package:rheel_estate/screens/guest_screens/guest_inquiries_screen.dart';
-import 'package:rheel_estate/screens/main_screens/favourite_screen.dart';
+
 import 'package:rheel_estate/screens/main_screens/home_screen.dart';
-import 'package:rheel_estate/screens/main_screens/inquiries_screen.dart';
+
 import 'package:rheel_estate/screens/main_screens/profile_screen.dart';
 import 'package:rheel_estate/utils/colors.dart';
 import 'package:rheel_estate/utils/dimensions.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
 
 class GuestFloatingBar extends StatefulWidget {
   const GuestFloatingBar({super.key});
@@ -107,7 +107,7 @@ class _GuestFloatingBarState extends State<GuestFloatingBar> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(8.0),
         decoration: isActive
-            ? BoxDecoration(
+            ? const BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white, // Background for active tab
         )
