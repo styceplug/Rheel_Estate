@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:rheel_estate/utils/app_constants.dart';
@@ -16,284 +14,121 @@ class _NextState extends State<Next> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0XFFF9F9F9),
-        leading: Row(
+      backgroundColor: Colors.white,
+        body: SizedBox(
+      height: Dimensions.screenHeight,
+      width: Dimensions.screenWidth,
+      child: Stack(
           children: [
-            SizedBox(
-              width: Dimensions.width30,
-            ),
-            Icon(Iconsax.menu),
-          ],
-        ),
-        actions: [
-          Row(
-            children: [
-              Container(
-                height: Dimensions.height40,
-                width: Dimensions.width40,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      AppConstants.getPngAsset('avatar'),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: Dimensions.width30)
-            ],
-          )
-        ],
-      ),
-      backgroundColor: Color(0XFFF9F9F9),
-      body: Container(
-        margin: EdgeInsets.symmetric(
-            vertical: Dimensions.height20, horizontal: Dimensions.width20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Column(
           children: [
-            SizedBox(height: Dimensions.height30),
-            Row(
-              children: [
-                Text(
-                  'Welcome back,',
-                  style: TextStyle(
-                      fontSize: Dimensions.font28, fontWeight: FontWeight.w400),
-                ),
-                SizedBox(width: Dimensions.width5),
-                Text(
-                  'Olotu!',
-                  style: TextStyle(
-                      fontSize: Dimensions.font28, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-            SizedBox(height: Dimensions.height30),
-            Text(
-              'How are you feeling today?',
-              style: TextStyle(
-                  fontSize: Dimensions.font18, fontWeight: FontWeight.w400),
-            ),
-            SizedBox(height: Dimensions.height30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  height: Dimensions.height10 * 9,
-                  width: Dimensions.width10 * 9,
-                  decoration: BoxDecoration(
-                    color: Colors.pink,
-                    borderRadius: BorderRadius.circular(Dimensions.radius20),
-                  ),
-                  child: Container(
-                    height: Dimensions.height10 * 5,
-                    width: Dimensions.width10 * 5,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        scale: 2.5,
-                        image: AssetImage(
-                          AppConstants.getPngAsset('Happy'),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: Dimensions.height10 * 9,
-                  width: Dimensions.width10 * 9,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(Dimensions.radius20),
-                  ),
-                  child: Container(
-                    height: Dimensions.height10 * 5,
-                    width: Dimensions.width10 * 5,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        scale: 2.5,
-                        image: AssetImage(
-                          AppConstants.getPngAsset('Calm - Icon'),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: Dimensions.height10 * 9,
-                  width: Dimensions.width10 * 9,
-                  decoration: BoxDecoration(
-                    color: Colors.lightGreen,
-                    borderRadius: BorderRadius.circular(Dimensions.radius20),
-                  ),
-                  child: Container(
-                    height: Dimensions.height10 * 5,
-                    width: Dimensions.width10 * 5,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        scale: 2.5,
-                        image: AssetImage(
-                          AppConstants.getPngAsset('Relax'),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: Dimensions.height10 * 9,
-                  width: Dimensions.width10 * 9,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(Dimensions.radius20),
-                  ),
-                  child: Container(
-                    height: Dimensions.height10 * 5,
-                    width: Dimensions.width10 * 5,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        scale: 2.5,
-                        image: AssetImage(
-                          AppConstants.getPngAsset('Focus'),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: Dimensions.height30),
-            Text(
-              'Today\'s Task',
-              style: TextStyle(
-                  fontSize: Dimensions.font18, fontWeight: FontWeight.w500),
-            ),
-            SizedBox(height: Dimensions.height30),
             Container(
               padding: EdgeInsets.symmetric(
                   horizontal: Dimensions.width20,
                   vertical: Dimensions.height20),
-              height: Dimensions.height150,
+              height: Dimensions.screenHeight / 2.7,
               width: Dimensions.screenWidth,
-              decoration: BoxDecoration(
-                color: Colors.pinkAccent.shade100.withOpacity(0.8),
-                borderRadius: BorderRadius.circular(Dimensions.radius20),
-              ),
-              child: Row(
+              decoration: BoxDecoration(color: Colors.black87),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Peer Group Meetup',
-                          style: TextStyle(
-                              fontSize: Dimensions.font20,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          'Lets open up to the thing that matters among the people',
-                          style: TextStyle(
-                              fontSize: Dimensions.font16,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              'Join Now',
-                              style: TextStyle(
-                                  fontSize: Dimensions.font16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.pink.shade800),
-                            ),
-                            Icon(
-                              Icons.play_circle,
-                              color: Colors.pink.shade800,
-                            )
-                          ],
-                        )
-                      ],
-                    ),
+                  SizedBox(height: Dimensions.height76),
+                  Text(
+                    'Location',
+                    style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: Dimensions.font15,
+                        fontWeight: FontWeight.w300),
                   ),
-                  Container(
-                    height: Dimensions.height100,
-                    width: Dimensions.width100,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                          AppConstants.getPngAsset('Meetup Icon'),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Ekiti State University',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Dimensions.font18,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Icon(Icons.arrow_drop_down, color: Colors.white),
+                    ],
+                  ),
+                  SizedBox(height: Dimensions.height20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey.withOpacity(0.05),
+                            filled: true,
+                            hintText: 'Search Coffee',
+                            hintStyle: TextStyle(color: Colors.white70),
+                            prefixIcon: Icon(
+                              Iconsax.search_normal,
+                              color: Colors.white70,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(Dimensions.radius15),
+                              borderSide: BorderSide(
+                                  color: Colors.black87,
+                                  width:
+                                      Dimensions.width5 / Dimensions.width20),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(Dimensions.radius15),
+                              borderSide: BorderSide(
+                                  color: Colors.black87,
+                                  width:
+                                      Dimensions.width5 / Dimensions.width20),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: Dimensions.width40,
+                                vertical: Dimensions.height20),
+                          ),
                         ),
                       ),
-                    ),
+                      SizedBox(width: Dimensions.width20),
+                      Container(
+                        height: Dimensions.height10 * 6,
+                        width: Dimensions.width10 * 6,
+                        decoration: BoxDecoration(
+                            color: Colors.deepOrange,
+                            borderRadius:
+                                BorderRadius.circular(Dimensions.radius15)),
+                        child: Icon(
+                          Iconsax.sort,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   )
                 ],
               ),
-            ),
-            SizedBox(height: Dimensions.height30),
-            Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.width20,
-                  vertical: Dimensions.height20),
-              height: Dimensions.height150 + Dimensions.height15,
-              width: Dimensions.screenWidth,
-              decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(Dimensions.radius20),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          'Meditation',
-                          style: TextStyle(
-                              fontSize: Dimensions.font20,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          'Aura is the most important thing that matters to you, join us on',
-                          style: TextStyle(
-                              fontSize: Dimensions.font16,
-                              fontWeight: FontWeight.w400),
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              '06:00 PM',
-                              style: TextStyle(
-                                  fontSize: Dimensions.font16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.brown),
-                            ),
-                            Icon(
-                              Icons.access_time_filled_rounded,
-                              color: Colors.brown,
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    height: Dimensions.height100,
-                    width: Dimensions.width100,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                          AppConstants.getPngAsset('Meditation'),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+            )
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
+        Positioned(
+          top: Dimensions.width30,
+          child: Container(
+            height: Dimensions.height100 * 1.5,
+            margin: EdgeInsets.symmetric(horizontal: Dimensions.width30),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(Dimensions.radius20),
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: AssetImage(
+                  AppConstants.getPngAsset('Banner 1'),
+                ),
+              ),
+            ),
+          ),
+        )
+      ]),
+    )
+
+        /*bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         iconSize: Dimensions.iconSize20,
         selectedItemColor: Colors.black,
@@ -316,7 +151,7 @@ class _NextState extends State<Next> {
             label: 'Settings'
           ),
         ],
-      ),
-    );
+      ),*/
+        );
   }
 }

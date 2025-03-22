@@ -31,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> properties = [];
   bool _isLoading = false;
 
-  Future<void> refreshProperties() async {
+  /*Future<void> refreshProperties() async {
     setState(() {
       _isLoading = true;
     });
@@ -46,6 +46,30 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }*/
+
+  Future<void> refreshProperties() async {
+    if (!Get.isRegistered<PropertiesController>()) {
+      debugPrint("PropertiesController not registered");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await propertiesController.fetchProperties(propertiesController.properties ?? []);
+    } catch (e) {
+      debugPrint("Error refreshing properties: $e");
+      Get.snackbar("Error", "Failed to refresh properties");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

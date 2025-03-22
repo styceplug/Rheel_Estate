@@ -12,7 +12,6 @@ class MySearchBar extends StatefulWidget {
   final String hintText;
   final Function(String, List<dynamic>) onLocationSelected;
 
-
   const MySearchBar({
     super.key,
     required this.hintText,
@@ -24,7 +23,7 @@ class MySearchBar extends StatefulWidget {
 }
 
 class _MySearchBarState extends State<MySearchBar> {
-  PropertiesController propertyController  = Get.find<PropertiesController>();
+  late PropertiesController propertyController;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
@@ -38,7 +37,15 @@ class _MySearchBarState extends State<MySearchBar> {
   @override
   void initState() {
     super.initState();
-    _fetchLocations();
+
+    // Ensure PropertiesController is initialized before fetching locations
+    if (Get.isRegistered<PropertiesController>()) {
+      propertyController = Get.find<PropertiesController>();
+      _fetchLocations();
+    } else {
+      debugPrint('Error: PropertiesController is not registered in GetX.');
+    }
+
     _focusNode.addListener(_handleFocusChange);
   }
 
@@ -64,6 +71,9 @@ class _MySearchBarState extends State<MySearchBar> {
 
     try {
       final response = await http.get(Uri.parse('${AppConstants.BASE_URL}${AppConstants.GET_PROPERTIES}'));
+      debugPrint('Fetching properties...');
+      debugPrint('Response Status Code: ${response.statusCode}');
+      debugPrint('Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -75,12 +85,11 @@ class _MySearchBarState extends State<MySearchBar> {
               .map<String>((property) => property['location'].toString())
               .toSet();
 
-          _properties = propertyController.properties;
+          _properties = propertyController.properties ?? [];
 
           setState(() {
             _locations = locationsSet.toList();
             _filteredLocations = _locations;
-            // _properties = properties;
           });
         } else {
           throw Exception("Unexpected JSON structure: 'data' key not found");
@@ -106,18 +115,18 @@ class _MySearchBarState extends State<MySearchBar> {
   }
 
   void _selectLocation(String location) {
-    print(_filteredLocations);
-    print(location);
+    debugPrint('Selected Location: $location');
+
     List<PropertiesModel> filteredProperties = _properties
         .where((property) => property.location.toLowerCase().contains(location.toLowerCase()))
         .toList();
-    print(filteredProperties);
-    
-    Get.to(()=>SearchListScreen(properties: filteredProperties));
+
+    debugPrint('Filtered Properties: $filteredProperties');
+
+    Get.to(() => SearchListScreen(properties: filteredProperties));
 
     setState(() {
       _controller.text = location;
-      // _filteredLocations.clear();
       _controller.clear();
     });
 
@@ -160,10 +169,12 @@ class _MySearchBarState extends State<MySearchBar> {
               )
                   : null,
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(
-                      width: Dimensions.width5 / Dimensions.width20,
-                      color: Colors.black.withOpacity(0.4))),
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide(
+                  width: Dimensions.width5 / Dimensions.width20,
+                  color: Colors.black.withOpacity(0.4),
+                ),
+              ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(Dimensions.radius30),
                 borderSide: BorderSide(
@@ -191,12 +202,7 @@ class _MySearchBarState extends State<MySearchBar> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                   BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                  ),
-                ],
+                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
               ),
               child: ListView.builder(
                 shrinkWrap: true,

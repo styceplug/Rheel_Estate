@@ -658,21 +658,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
+                    /*Expanded(
                       child: Container(
                         height: Dimensions.height5 / Dimensions.height10,
                         width: Dimensions.width100 * 1.5,
                         color: AppColors.blackColor,
                       ),
-                    ),
+                    ),*/
                     SizedBox(width: Dimensions.width20),
                     const Text('OR'),
                     SizedBox(width: Dimensions.width20),
-                    Container(
+                    /*Container(
                       height: Dimensions.height5 / Dimensions.height10,
                       width: Dimensions.width100 * 1.5,
                       color: AppColors.blackColor,
-                    ),
+                    ),*/
                   ],
                 ),
                 SizedBox(height: Dimensions.height50),

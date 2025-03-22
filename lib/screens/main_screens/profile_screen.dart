@@ -281,7 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: Dimensions.height15),
             InkWell(
               onTap: (){
-                // Get.toNamed(AppRoutes.heroScreen);
+                Get.toNamed(AppRoutes.heroScreen);
               },
               child: Text(
                 "$username",
